@@ -73,9 +73,9 @@
             border: 1px solid var(--accent-green);
             color: var(--accent-green);
             text-decoration: none;
-            padding: 10px 16px;
+            padding: 14px 16px;
             border-radius: 12px;
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 600;
             margin-bottom: 24px;
             transition: all 0.2s ease;
@@ -160,7 +160,6 @@
 
 <div class="vcard-container">
     <div class="profile-wrapper">
-        <!-- Default avatar image. You can replace this link with your own image URL later -->
         <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=150" alt="Profile" class="profile-pic">
     </div>
 
@@ -183,7 +182,6 @@
         <button type="submit" class="submit-btn">Join VCF Compilation</button>
     </form>
 
-    <!-- This section handles your host visibility setting -->
     <div class="download-box" id="downloadSection" style="display: none;">
         <a href="/api/campaign/sample-campaign/download" id="vcfDownloadBtn" class="vcf-download-link">
             📥 Download Compiled VCF file
@@ -198,10 +196,9 @@
         e.preventDefault();
         
         const name = document.getElementById('nameInput').value;
-        const phone = document.getElementById('phoneInput').value;
+        const phone = document.getElementById('phoneInput').value.trim();
 
         try {
-            // Sends data directly to your dynamic backend server
             const response = await fetch('/api/campaign/sample-campaign/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -217,19 +214,17 @@
 
             alert(data.message);
             
-            // FORWARDING RULE: Redirect to your channel automatically
             if (data.redirectUrl) {
                 window.location.href = data.redirectUrl;
             }
 
         } catch (err) {
             console.error("Networking error:", err);
-            alert("Connection error. Is your server running?");
+            alert("Connection error or server starting up. Try again in a moment.");
         }
     });
 
-    // Simple placeholder rule control. 
-    // If visibility is 'public', everyone sees the download button at the bottom.
+    // Make download section visible to everyone by default
     const campaignDownloadVisibility = "public"; 
     if (campaignDownloadVisibility === 'public') {
         document.getElementById('downloadSection').style.display = 'block';
