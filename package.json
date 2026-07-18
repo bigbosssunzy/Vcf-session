@@ -1,0 +1,13 @@
+{
+  "name": "vcf-dynamic-platform",
+  "version": "1.0.0",
+  "description": "Dynamic VCF Campaign Platform for Big Boss Net",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "vcards-js": "^2.10.0"
+  }
+}
