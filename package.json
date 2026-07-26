@@ -1,13 +1,16 @@
 {
-  "name": "vcf-dynamic-platform",
+  "name": "vcf-hoster",
   "version": "1.0.0",
-  "description": "Dynamic VCF Campaign Platform for Big Boss Net",
+  "description": "Custom WhatsApp VCF Hosting Platform",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
+  "engines": {
+    "node": ">=18.x"
+  },
   "dependencies": {
     "express": "^4.19.2",
-    "vcards-js": "^2.10.0"
+    "uuid": "^9.0.1"
   }
 }

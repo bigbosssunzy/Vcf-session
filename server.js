@@ -1,158 +1,120 @@
 const express = require('express');
-const vCardsJS = require('vcards-js');
-const fs = require('fs');
-const path = require('path'); // Core Node module to handle folder paths
-const app = express();
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// CRITICAL: This line tells Node to serve your index.html out of the public folder automatically
-app.use(express.static(path.join(__dirname, 'public')));
-
-const FILE_PATH = './campaigns_store.json';
-const WHATSAPP_CHANNEL_LINK = "https://whatsapp.com/channel/0029VbCxwJeEgGfFhMx4zg3q";
-
-// ... Keep all your existing functions (loadData, saveData) and API routes exactly as they are ...
-
-// Make sure the port is dynamic so Render can control it
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.const express = require('express');
-const vCardsJS = require('vcards-js');
-const fs = require('fs');
 const path = require('path');
+const { v4: uuidv4 } = require('uuid');
+
 const app = express();
+const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// Serve static frontend files from the public folder
 app.use(express.static(path.join(__dirname, 'public')));
 
-const FILE_PATH = './campaigns_store.json';
-const WHATSAPP_CHANNEL_LINK = "https://whatsapp.com/channel/0029VbCxwJeEgGfFhMx4zg3q";
+// In-memory database simulation (Use MongoDB/SQL for production persistence)
+// Sessions structure: { sessionId: { limitType, limitValue, createdAt, password, contacts: Set/Array } }
+const sessions = {};
 
-// Helper function to load data and automatically create the campaign if missing
-function loadData() {
-    try {
-        if (!fs.existsSync(FILE_PATH)) {
-            const defaultData = {
-                "sample-campaign": {
-                    id: "sample-campaign",
-                    creatorId: "admin123",
-                    title: "Big Boss Net 🚀",
-                    limitType: "target", 
-                    targetLimit: 100,
-                    expiryTime: null,
-                    downloadVisibility: "public",
-                    contacts: []
-                }
-            };
-            fs.writeFileSync(FILE_PATH, JSON.stringify(defaultData, null, 2), 'utf8');
-            return defaultData;
-        }
-        const data = fs.readFileSync(FILE_PATH, 'utf8');
-        let parsed = JSON.parse(data);
-        
-        // Safety check: If the file exists but doesn't have our campaign, inject it
-        if (!parsed["sample-campaign"]) {
-            parsed["sample-campaign"] = {
-                id: "sample-campaign",
-                creatorId: "admin123",
-                title: "Big Boss Net 🚀",
-                limitType: "target", 
-                targetLimit: 100,
-                expiryTime: null,
-                downloadVisibility: "public",
-                contacts: []
-            };
-            fs.writeFileSync(FILE_PATH, JSON.stringify(parsed, null, 2), 'utf8');
-        }
-        return parsed;
-    } catch (err) {
-        console.error("Error with database file store:", err);
-        return {};
-    }
-}
+// 1. Create a new VCF Session
+app.post('/api/create-session', (req, res) => {
+    const { limitType, limitValue } = req.body; // limitType: 'time' or 'number'
+    const sessionId = uuidv4().substring(0, 8);
+    const password = Math.floor(1000 + Math.random() * 9000).toString(); // 4-digit secure code
 
-function saveData(data) {
-    fs.writeFileSync(FILE_PATH, JSON.stringify(data, null, 2), 'utf8');
-}
-
-// 1. REGISTRATION ENDPOINT
-app.post('/api/campaign/:id/register', (req, res) => {
-    let campaigns = loadData();
-    const campaign = campaigns[req.params.id];
-    
-    if (!campaign) {
-        return res.status(404).json({ error: "Campaign not found" });
+    let expiresAt = null;
+    if (limitType === 'time') {
+        const { unit, value } = limitValue; // unit: hours, days, weeks, months
+        const multipliers = {
+            hours: 60 * 60 * 1000,
+            days: 24 * 60 * 60 * 1000,
+            weeks: 7 * 24 * 60 * 60 * 1000,
+            months: 30 * 24 * 60 * 60 * 1000
+        };
+        expiresAt = Date.now() + (value * (multipliers[unit] || multipliers.days));
     }
 
-    // Enforce Time Limit
-    if (campaign.limitType === 'time' && campaign.expiryTime && Date.now() > campaign.expiryTime) {
-        return res.status(400).json({ error: "This VCF campaign has expired!" });
-    }
+    sessions[sessionId] = {
+        limitType,
+        limitValue: limitType === 'number' ? parseInt(limitValue.max) : null,
+        expiresAt,
+        password,
+        contacts: [] // Array of { name, phone }
+    };
 
-    // Enforce Target Limit
-    if (campaign.limitType === 'target' && campaign.contacts.length >= campaign.targetLimit) {
-        return res.status(400).json({ error: "Target capacity reached! No more entries allowed." });
-    }
-
-    const { name, phone } = req.body;
-
-    if (!name || !phone) {
-        return res.status(400).json({ error: "Name and Phone Number are required." });
-    }
-
-    if (!phone.startsWith('+') || phone.length < 10) {
-        return res.status(400).json({ error: "Phone number must include a valid country code (e.g., +234...)" });
-    }
-
-    // Rule: Same phone number cannot register twice
-    const phoneExists = campaign.contacts.some(c => c.phone === phone);
-    if (phoneExists) {
-        return res.status(400).json({ error: "This phone number is already registered." });
-    }
-
-    // Rule: Same name can be used for different numbers
-    campaign.contacts.push({ name, phone });
-    saveData(campaigns);
-
-    res.json({ 
-        success: true, 
-        message: "Successfully registered! Redirecting to channel...",
-        redirectUrl: WHATSAPP_CHANNEL_LINK
-    });
+    res.json({ success: true, sessionId, password, link: `/room.html?id=${sessionId}` });
 });
 
-// 2. DOWNLOAD ENDPOINT
-app.get('/api/campaign/:id/download', (req, res) => {
-    let campaigns = loadData();
-    const campaign = campaigns[req.params.id];
-    if (!campaign) return res.status(404).send("Campaign not found");
+// 2. Check Session Status & Info
+app.get('/api/session/:id', (req, res) => {
+    const session = sessions[req.params.id];
+    if (!session) return res.status(404).json({ error: 'VCF Session not found!' });
 
-    if (campaign.contacts.length === 0) {
-        return res.status(400).send("No contacts have registered yet.");
+    // Check if time expired
+    if (session.limitType === 'time' && Date.now() > session.expiresAt) {
+        return res.json({ active: false, message: 'This VCF session has expired!' });
+    }
+    // Check if number limit reached
+    if (session.limitType === 'number' && session.contacts.length >= session.limitValue) {
+        return res.json({ active: false, message: 'Participant limit has been reached!' });
     }
 
-    let masterVcfString = "";
-
-    campaign.contacts.forEach((contact) => {
-        const vCard = vCardsJS();
-        vCard.firstName = contact.name; 
-        vCard.cellPhone = contact.phone;
-        vCard.organization = campaign.title;
-        masterVcfString += vCard.getFormattedString() + "\n";
-    });
-
-    res.set({
-        'Content-Type': 'text/vcard; charset=utf-8; name="compiled_contacts.vcf"',
-        'Content-Disposition': `attachment; filename="${campaign.id}_contacts.vcf"`
-    });
-
-    res.send(masterVcfString);
+    res.json({ active: true, totalContacts: session.contacts.length });
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`VCF Platform active on port ${PORT}`));
-(`VCF Dynamic Engine online on port ${PORT}`));
+// 3. Register Contact
+app.post('/api/register', (req, res) => {
+    const { sessionId, name, phone } = req.body;
+    const session = sessions[sessionId];
+
+    if (!session) return res.status(404).json({ error: 'Session not found.' });
+
+    // Expiration checks
+    if (session.limitType === 'time' && Date.now() > session.expiresAt) {
+        return res.status(400).json({ error: 'Registration closed: Time is up!' });
+    }
+    if (session.limitType === 'number' && session.contacts.length >= session.limitValue) {
+        return res.status(400).json({ error: 'Registration closed: Maximum number of participants reached!' });
+    }
+
+    // Validate phone format (+countrycode)
+    const phoneRegex = /^\+\d{10,15}$/;
+    if (!phoneRegex.test(phone)) {
+        return res.status(400).json({ error: 'Invalid phone format! Must start with country code (e.g., +2347086057694).' });
+    }
+
+    // Check duplicate number
+    const exists = session.contacts.some(c => c.phone === phone);
+    if (exists) {
+        return res.status(400).json({ error: 'This number has already been registered.' });
+    }
+
+    session.contacts.push({ name: name.trim(), phone: phone.trim() });
+    res.json({ success: true, message: 'This number is added successfully!' });
+});
+
+// 4. Verify Password & Download VCF
+app.post('/api/download-vcf', (req, res) => {
+    const { sessionId, password } = req.body;
+    const session = sessions[sessionId];
+
+    if (!session) return res.status(404).json({ error: 'Session not found.' });
+    if (session.password !== password) {
+        return res.status(401).json({ error: 'Incorrect VCF password!' });
+    }
+
+    // Generate VCF Content
+    let vcfData = '';
+    session.contacts.forEach((contact, index) => {
+        vcfData += 'BEGIN:VCARD\n';
+        vcfData += 'VERSION:3.0\n';
+        vcfData += `FN:${contact.name}\n`;
+        vcfData += `TEL;TYPE=CELL:${contact.phone}\n`;
+        vcfData += 'END:VCARD\n\n';
+    });
+
+    res.setHeader('Content-Type', 'text/vcard');
+    res.setHeader('Content-Disposition', `attachment; filename="WhatsApp_Contacts_${sessionId}.vcf"`);
+    res.send(vcfData);
+});
+
+app.listen(PORT, () => {
+    console.log(`VCF Server running on http://localhost:${PORT}`);
+});
