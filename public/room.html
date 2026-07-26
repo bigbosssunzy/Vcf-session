@@ -8,21 +8,38 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Poppins', sans-serif; background-color: #0b0f19; color: #f3f4f6; }
-        .glass { background: rgba(17, 24, 39, 0.75); backdrop-filter: blur(12px); border: 1px solid rgba(236, 72, 153, 0.2); }
+        .glass { background: rgba(17, 24, 39, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(236, 72, 153, 0.2); }
         .neon-glow { box-shadow: 0 0 25px rgba(236, 72, 153, 0.3); }
     </style>
 </head>
 <body class="min-h-screen flex flex-col items-center justify-center p-4">
 
-    <div class="max-w-md w-full glass rounded-2xl overflow-hidden neon-glow shadow-2xl">
-        <!-- Banner Image -->
-        <div class="relative h-48 w-full overflow-hidden">
+    <div class="max-w-md w-full glass rounded-2xl overflow-hidden neon-glow shadow-2xl mb-6">
+        <!-- Full Banner Image -->
+        <div class="relative h-64 w-full overflow-hidden">
             <img src="1000039669.jpg" alt="VCF Banner" class="w-full h-full object-cover">
             <div class="absolute inset-0 bg-gradient-to-t from-[#0b0f19] via-transparent to-transparent"></div>
-            <h1 id="status-title" class="absolute bottom-3 left-4 text-xl font-bold text-pink-500">Join VCF Contact List</h1>
+            <h1 class="absolute bottom-4 left-4 text-2xl font-bold text-pink-500 drop-shadow-md">Join VCF Contact List</h1>
+        </div>
+
+        <!-- Signature Tag in Middle Under Banner -->
+        <div class="text-center py-2 text-xs text-pink-400 font-semibold tracking-wide border-b border-gray-800 bg-gray-900/60">
+            🦊⃟ᴠͥɪͣᴘͫ✮⃝🇧𝖎𝖌🇧ө͜͡ss𝄟⃝🎧™
         </div>
 
         <div class="p-6">
+            <!-- Return to Home Button -->
+            <div class="mb-4">
+                <a href="/" class="block text-center bg-gray-800 hover:bg-gray-700 text-gray-300 font-medium py-2.5 rounded-lg text-sm transition border border-gray-700">
+                    🏠 Return to Home Page (Host Your Own VCF)
+                </a>
+            </div>
+
+            <!-- Live Status/Counter or Countdown Box -->
+            <div id="live-status-box" class="mb-4 p-3 bg-gray-900 border border-cyan-500/30 rounded-xl text-center text-sm font-medium text-cyan-300">
+                Checking session status...
+            </div>
+
             <div id="alert-box" class="hidden mb-4 p-3 rounded-lg text-sm text-center font-medium"></div>
 
             <!-- Registration Form -->
@@ -43,7 +60,7 @@
 
             <hr class="border-gray-800 my-6">
 
-            <!-- Download Section with Password Protection -->
+            <!-- Download Section -->
             <div class="space-y-3">
                 <h3 class="text-sm font-semibold text-cyan-400">Download VCF File</h3>
                 <div class="flex gap-2">
@@ -54,6 +71,44 @@
                 </div>
                 <span class="text-xs text-gray-500 block">Password is required to unlock the download button.</span>
             </div>
+
+            <hr class="border-gray-800 my-6">
+
+            <!-- Deploy WhatsApp Bot Section -->
+            <div class="space-y-4">
+                <h3 class="text-md font-bold text-center text-pink-500">🤖 WhatsApp Bot</h3>
+                <a href="https://whatsapp.com/channel/0029VbCxwJeEgGfFhMx4zg3q" target="_blank" class="block text-center bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 font-bold py-3 rounded-xl transition-all shadow-lg text-white">
+                    Deploy WhatsApp Bot 🔥
+                </a>
+
+                <!-- Features Box -->
+                <div class="bg-gray-900/90 border border-gray-800 rounded-xl p-4 text-xs text-gray-300 space-y-2">
+                    <p class="font-bold text-center text-yellow-400 mb-2">WHATSAPP BOT FEATURES🔥🔥👇</p>
+                    <ul class="list-none space-y-1">
+                        <li>1. *Autoview status* 🔥</li>
+                        <li>2. *Antidelete messege* 🔥</li>
+                        <li>3. *Download songs and videos* 🔥</li>
+                        <li>4. *Download view once photo* 🔥</li>
+                        <li>5. *Fake recording* 🔥</li>
+                        <li>6. *Always online* 🔥</li>
+                        <li>7. *Fake typing* 🔥</li>
+                        <li>8. *Auto like status* 🔥</li>
+                        <li>9. *Ai features🔥*</li>
+                        <li>10. *Chat Gpt features and many more..🔥*</li>
+                        <li>11. *Auto like status* 🔥</li>
+                        <li>12. *Downloading status* 🔥</li>
+                        <li>13. *Anticall* 🔥</li>
+                        <li>14. *chatbot* 🔥</li>
+                        <li>15. *Auto bio* 🔥</li>
+                        <li>16. *Auto react to messages* 🔥</li>
+                        <li>17. *Auto read messages* 🔥</li>
+                        <li>18. *Auto save contacts* 🔥</li>
+                        <li>19. *Anti WhatsApp ban mode* 🔥</li>
+                    </ul>
+                    <p class="text-center font-semibold text-pink-400 mt-3">*All these features* *can be* *turned on/off*</p>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -61,18 +116,46 @@
         const urlParams = new URLSearchParams(window.location.search);
         const sessionId = urlParams.get('id');
 
-        // Check if session is active upon loading
-        async function checkSession() {
-            const res = await fetch(`/api/session/${sessionId}`);
-            const data = await res.json();
-            if (!data.active) {
-                showAlert(data.message || 'This session is inactive or closed.', 'red');
-                document.getElementById('reg-form').style.display = 'none';
+        async function fetchSessionStatus() {
+            try {
+                const res = await fetch(`/api/session/${sessionId}`);
+                const data = await res.json();
+                
+                const statusBox = document.getElementById('live-status-box');
+
+                if (!data.active) {
+                    statusBox.innerText = data.message || 'This session is closed.';
+                    statusBox.className = 'mb-4 p-3 bg-red-900/50 border border-red-700 rounded-xl text-center text-sm font-medium text-red-300';
+                    document.getElementById('reg-form').style.display = 'none';
+                    return;
+                }
+
+                if (data.limitType === 'number') {
+                    statusBox.innerText = `Registered People: ${data.totalContacts} / ${data.limitValue} Limit`;
+                } else if (data.limitType === 'time' && data.expiresAt) {
+                    const updateCountdown = () => {
+                        const timeLeft = data.expiresAt - Date.now();
+                        if (timeLeft <= 0) {
+                            statusBox.innerText = 'Time is up! Registration closed.';
+                            statusBox.className = 'mb-4 p-3 bg-red-900/50 border border-red-700 rounded-xl text-center text-sm font-medium text-red-300';
+                            document.getElementById('reg-form').style.display = 'none';
+                            return;
+                        }
+                        const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                        const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                        const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+                        statusBox.innerText = `Countdown: ${hours}h ${minutes}m ${seconds}s left (${data.totalContacts} registered)`;
+                    };
+                    updateCountdown();
+                    setInterval(updateCountdown, 1000);
+                }
+            } catch (err) {
+                console.error(err);
             }
         }
-        checkSession();
 
-        // Enable download button when password input has text
+        fetchSessionStatus();
+
         document.getElementById('vcf-password').addEventListener('input', (e) => {
             const btn = document.getElementById('download-btn');
             if (e.target.value.trim().length > 0) {
@@ -86,7 +169,6 @@
             }
         });
 
-        // Handle Registration
         document.getElementById('reg-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const name = document.getElementById('name').value;
@@ -102,7 +184,6 @@
 
             if (response.ok) {
                 showAlert(result.message, 'green');
-                // Redirect to WhatsApp channel after short delay
                 setTimeout(() => {
                     window.location.href = 'https://whatsapp.com/channel/0029VbCxwJeEgGfFhMx4zg3q';
                 }, 1500);
@@ -111,7 +192,6 @@
             }
         });
 
-        // Handle Download Request
         async function downloadVcf() {
             const password = document.getElementById('vcf-password').value;
 
@@ -139,7 +219,7 @@
         function showAlert(message, type) {
             const box = document.getElementById('alert-box');
             box.innerText = message;
-            box.classList.remove('hidden', 'bg-red-900/50', 'text-red-300', 'bg-green-900/50', 'text-green-300');
+            box.classList.remove('hidden', 'bg-red-900/50', 'text-red-300', 'bg-green-900/50', 'text-green-300', 'border', 'border-red-700', 'border-green-700');
             if (type === 'red') {
                 box.classList.add('bg-red-900/50', 'text-red-300', 'border', 'border-red-700');
             } else {
