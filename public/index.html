@@ -3,233 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Big Boss VCF Hub</title>
+    <title>Joker-MD VCF Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg-color: #0b0f19;
-            --card-bg: #151d30;
-            --accent-green: #25d366;
-            --accent-blue: #3b82f6;
-            --text-main: #f3f4f6;
-            --text-muted: #9ca3af;
-        }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-        }
-
-        .vcard-container {
-            background-color: var(--card-bg);
-            border: 1px solid #243354;
-            border-radius: 24px;
-            width: 100%;
-            max-width: 420px;
-            padding: 32px;
-            text-align: center;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
-        }
-
-        .profile-wrapper {
-            position: relative;
-            width: 110px;
-            height: 110px;
-            margin: 0 auto 16px;
-        }
-
-        .profile-pic {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid var(--accent-blue);
-        }
-
-        h1 {
-            font-size: 24px;
-            margin: 0 0 8px 0;
-            font-weight: 700;
-        }
-
-        .subtitle {
-            color: var(--text-muted);
-            font-size: 14px;
-            margin-bottom: 24px;
-        }
-
-        .channel-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            background-color: rgba(37, 211, 102, 0.1);
-            border: 1px solid var(--accent-green);
-            color: var(--accent-green);
-            text-decoration: none;
-            padding: 14px 16px;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 24px;
-            transition: all 0.2s ease;
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        .channel-btn:hover {
-            background-color: var(--accent-green);
-            color: #fff;
-        }
-
-        .input-group {
-            text-align: left;
-            margin-bottom: 16px;
-        }
-
-        label {
-            display: block;
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--text-muted);
-            margin-bottom: 6px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        input {
-            width: 100%;
-            padding: 12px 16px;
-            background-color: #0b0f19;
-            border: 1px solid #243354;
-            border-radius: 12px;
-            color: #fff;
-            font-size: 15px;
-            box-sizing: border-box;
-            transition: border-color 0.2s;
-        }
-
-        input:focus {
-            outline: none;
-            border-color: var(--accent-blue);
-        }
-
-        .submit-btn {
-            background-color: var(--accent-blue);
-            color: white;
-            border: none;
-            width: 100%;
-            padding: 14px;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 8px;
-            transition: opacity 0.2s;
-        }
-
-        .submit-btn:hover {
-            opacity: 0.9;
-        }
-
-        .download-box {
-            margin-top: 24px;
-            padding-top: 24px;
-            border-top: 1px solid #243354;
-        }
-
-        .vcf-download-link {
-            display: block;
-            background-color: #fff;
-            color: #0b0f19;
-            text-decoration: none;
-            padding: 14px;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 15px;
-        }
+        body { font-family: 'Poppins', sans-serif; background-color: #0b0f19; color: #f3f4f6; }
+        .glass { background: rgba(17, 24, 39, 0.75); backdrop-filter: blur(12px); border: 1px solid rgba(236, 72, 153, 0.2); }
+        .neon-glow { box-shadow: 0 0 25px rgba(236, 72, 153, 0.3); }
     </style>
 </head>
-<body>
+<body class="min-h-screen flex flex-col items-center justify-center p-4">
 
-<div class="vcard-container">
-    <div class="profile-wrapper">
-        <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=150" alt="Profile" class="profile-pic">
+    <!-- Container Card -->
+    <div class="max-w-md w-full glass rounded-2xl overflow-hidden neon-glow shadow-2xl">
+        <!-- Banner Image -->
+        <div class="relative h-56 w-full overflow-hidden">
+            <img src="1000039669.jpg" alt="VCF Banner" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-t from-[#0b0f19] via-transparent to-transparent"></div>
+            <h1 class="absolute bottom-3 left-4 text-2xl font-bold text-pink-500 drop-shadow-md">VCF Hub Portal</h1>
+        </div>
+
+        <div class="p-6">
+            <!-- Creator Panel / Setup Section -->
+            <div id="creator-section">
+                <h2 class="text-lg font-semibold mb-4 text-cyan-400">Host a New VCF List</h2>
+                <form id="create-form" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1 text-gray-300">Choose Limit Type</label>
+                        <select id="limitType" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3 text-white focus:border-pink-500 outline-none" onchange="toggleLimitFields()">
+                            <option value="time">Time Based Limit</option>
+                            <option value="number">Number of People Limit</option>
+                        </select>
+                    </div>
+
+                    <!-- Time Options -->
+                    <div id="time-options" class="grid grid-cols-2 gap-2">
+                        <input type="number" id="timeValue" placeholder="Duration value" value="24" class="bg-gray-900 border border-gray-700 rounded-lg p-3 text-white outline-none">
+                        <select id="timeUnit" class="bg-gray-900 border border-gray-700 rounded-lg p-3 text-white outline-none">
+                            <option value="hours">Hours</option>
+                            <option value="days" selected>Days</option>
+                            <option value="weeks">Weeks</option>
+                            <option value="months">Months</option>
+                        </select>
+                    </div>
+
+                    <!-- Number Options (Hidden by default) -->
+                    <div id="number-options" class="hidden">
+                        <label class="block text-sm font-medium mb-1 text-gray-300">Max Participants</label>
+                        <input type="number" id="maxPeople" placeholder="e.g. 100" value="50" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3 text-white outline-none">
+                    </div>
+
+                    <button type="submit" class="w-full bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 font-semibold py-3 rounded-lg transition-all shadow-lg text-white">
+                        Generate VCF Link & Password
+                    </button>
+                </form>
+
+                <!-- Result Box -->
+                <div id="result-box" class="hidden mt-6 p-4 bg-gray-900 border border-pink-500/40 rounded-xl space-y-3">
+                    <p class="text-sm text-green-400 font-semibold">VCF Session Created Successfully!</p>
+                    <div>
+                        <span class="text-xs text-gray-400">Shareable Link:</span>
+                        <input type="text" id="share-link" readonly class="w-full bg-gray-800 text-xs text-pink-300 p-2 rounded border border-gray-700 mt-1 select-all">
+                    </div>
+                    <div>
+                        <span class="text-xs text-gray-400">Download Password:</span>
+                        <p id="share-password" class="text-lg font-bold text-yellow-400 tracking-wider"></p>
+                    </div>
+                    <a id="visit-link" href="#" class="block text-center bg-cyan-600 hover:bg-cyan-500 text-white font-medium py-2 rounded-lg text-sm mt-2 transition">Open Participant Page</a>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <h1>Big Boss Net 🚀</h1>
-    <p class="subtitle">Enter details to save the compiled VCF network contacts</p>
+    <!-- Script Logic -->
+    <script>
+        function toggleLimitFields() {
+            const type = document.getElementById('limitType').value;
+            if (type === 'time') {
+                document.getElementById('time-options').classList.remove('hidden');
+                document.getElementById('number-options').classList.add('hidden');
+            } else {
+                document.getElementById('time-options').classList.add('hidden');
+                document.getElementById('number-options').classList.remove('hidden');
+            }
+        }
 
-    <a href="https://whatsapp.com/channel/0029VbCxwJeEgGfFhMx4zg3q" target="_blank" class="channel-btn">
-        🟢 Follow the channel for the VCF file
-    </a>
+        document.getElementById('create-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const limitType = document.getElementById('limitType').value;
+            let limitValue = {};
 
-    <form id="registrationForm">
-        <div class="input-group">
-            <label>Name (Emojis Allowed)</label>
-            <input type="text" id="nameInput" placeholder="e.g. Big Boss 👑" required>
-        </div>
-        <div class="input-group">
-            <label>Phone Number</label>
-            <input type="text" id="phoneInput" placeholder="e.g. +2348000000000" required>
-        </div>
-        <button type="submit" class="submit-btn">Join VCF Compilation</button>
-    </form>
+            if (limitType === 'time') {
+                limitValue = {
+                    value: document.getElementById('timeValue').value,
+                    unit: document.getElementById('timeUnit').value
+                };
+            } else {
+                limitValue = {
+                    max: document.getElementById('maxPeople').value
+                };
+            }
 
-    <div class="download-box" id="downloadSection" style="display: none;">
-        <a href="/api/campaign/sample-campaign/download" id="vcfDownloadBtn" class="vcf-download-link">
-            📥 Download Compiled VCF file
-        </a>
-    </div>
-</div>
-
-<script>
-    const form = document.getElementById('registrationForm');
-    
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        const name = document.getElementById('nameInput').value;
-        const phone = document.getElementById('phoneInput').value.trim();
-
-        try {
-            const response = await fetch('/api/campaign/sample-campaign/register', {
+            const response = await fetch('/api/create-session', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, phone })
+                body: JSON.stringify({ limitType, limitValue })
             });
 
             const data = await response.json();
-
-            if (!response.ok) {
-                alert(data.error || "Registration failed.");
-                return;
+            if (data.success) {
+                const fullLink = window.location.origin + data.link;
+                document.getElementById('share-link').value = fullLink;
+                document.getElementById('share-password').innerText = data.password;
+                document.getElementById('visit-link').href = data.link;
+                document.getElementById('result-box').classList.remove('hidden');
             }
-
-            alert(data.message);
-            
-            if (data.redirectUrl) {
-                window.location.href = data.redirectUrl;
-            }
-
-        } catch (err) {
-            console.error("Networking error:", err);
-            alert("Connection error or server starting up. Try again in a moment.");
-        }
-    });
-
-    // Make download section visible to everyone by default
-    const campaignDownloadVisibility = "public"; 
-    if (campaignDownloadVisibility === 'public') {
-        document.getElementById('downloadSection').style.display = 'block';
-    }
-</script>
-
+        });
+    </script>
 </body>
 </html>
